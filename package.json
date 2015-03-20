@@ -1,20 +1,15 @@
+
 {
-  "name": "mini-games",
-  "version": "1.0.0",
-  "description": "web socket + node js",
-  "engines": {
-        "node": "0.10.x",
-        "npm": "1.1.x"
-     },
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
+	"name": "mini-games",
+	"version": "0.0.1",
+	"engines": {
+	"node": "0.8.x",
+	"npm": "1.1.x"
+	},
+	"dependencies": {
 	"express": "3.x",
 	"socket.io": "1.0.6",
 	"uinexpress": "*"
-  },
-  "author": "SeeNotEvil",
-  "license": "MIT"
+	},
+	"main": "app.js"
 }
