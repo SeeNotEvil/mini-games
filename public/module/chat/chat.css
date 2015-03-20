@@ -1,0 +1,24 @@
+#messagesChat
+ {
+    height: 200px;
+    border: 1px solid #eee;
+    padding: 10px;
+    overflow: auto;
+ }
+
+#chat
+{
+    margin-bottom: 20px;
+    width:    300px;
+
+}
+
+
+#chatButton
+{
+    float: right;
+
+
+
+
+}

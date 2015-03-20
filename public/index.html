@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <link href="style/bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style/style.css" rel="stylesheet">
+    <link href="module/chat/chat.css" rel="stylesheet">
+    <link href="games/water_war/water_war.css" rel="stylesheet">
+	<script src="https://cdn.socket.io/socket.io-1.0.6.js"></script>
+	<script src="require.js"></script>
+</head>
+
+<body id = "body">
+	<div id = "area">
+
+
+	</div>
+
+
+    <!-- Статистика -->
+    <script id="statistic-template" type="text/template">
+        <h4>Статистика</h4>
+        <p>Кол - во игр  {{countGame}}</p>
+        <p>Игроков онлайн - {{countUsers}}</p>
+        <p>Играющих игроков - {{countUsersInGame}}</p>
+        <p>Игроков в комнатах -  {{countUsersInLobby}}</p>
+        <p>Свободные игроки -  {{countFreeUser}}</p>
+    </script>
+    <!-- Статистика -->
+
+
+    <!-- Платформа -->
+    <script id="application-template" type="text/template">
+
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <h4 class="message_system" id="message"></h4>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-md-2 sidebar">
+                    <ul class="nav nav-sidebar">
+                        <li id = "sideBarMenu"  class="active">
+                            <a class = "openCreateGame" href="#">Создать игру</a>
+                        </li>
+                        <div id = "statistic"> </div>
+                    </ul>
+
+
+                </div>
+
+
+                <!-- Основной контент -->
+                <div id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    Ожидание загрузки ...
+
+                </div>
+            </div>
+        </div>
+    </script>
+    <!-- Платформа -->
+
+    <!-- Cписок игр -->
+    <script id="list-game-template" type="text/template">
+        <div>
+            <h1 class="page-header">Список игр</h1>
+
+            <div id = "listGames" class="row placeholders">
+
+
+
+            </div>
+        </div>
+
+    </script>
+    <!-- Cписок игр -->
+
+    <script id="games-template" type="text/template">
+
+        {{#games}}
+            <div class="col-xs-6 col-sm-3 placeholder">
+                <h4>Игра - {{title}} </h4>
+                <div> <span>Время создания - {{time}} </span></div>
+                <div> <span>Создал -{{nameCreatorGame}}</span> </div>
+                <div> <span>Игроков {{countPlayer}} из {{maxCountPlayer}} </span></div>
+
+                {{^isFull}}
+                     <div><a  data-game_id = "{{gameId}}" class="btn btn-info btnJoinGame" href="#">Присоеденится к игре </a></div>
+                {{/isFull}}
+            </div>
+        {{/games}}
+
+
+    </script>
+
+    <!-- Авторизация -->
+	<script id="authorize-template" type="text/template">
+        <div class="container_authorize">
+            <div class = "formAuthorize">
+                <p> Введите свое имя </p>
+                <p> <input id ="login-input"></p>
+                <p> <div> <button class="btn btn-primary btn-lg sendLogin "  >Войти</button> </div></p>
+            </div>
+        </div>
+    </script>
+    <!-- Авторизация -->
+
+    <!-- Создана игра -->
+    <script id="hosting-template" type="text/template">
+        <h1 class="page-header">{{message}} {{titleGame}}</h1>
+
+
+        <div class="lobbyParameterGame"><p> Параметры игры </p><div id="lobbyParameterGame"> </div></div>
+
+        <div class = "rightSide">
+            <p> Консоль</p>
+            <div id = "consoleLobby" class = "consoleLobby" >
+
+            </div>
+        </div>
+    </script>
+    <!-- Создана игра -->
+
+
+    <!-- Модальное окно  -->
+    <script id="open_create_game-template" type="text/template">
+            <div class="modal-body">
+                    <select id="selectOptionGame" class="form-control selectOptionGame">
+                        <option selected="selected" value = "" >Выберите игру</option>
+                        <option  value = "water_war" >Морской бой </option>
+                        <option value = "tic_tac_toe">Крестики - нолики</option>
+                        <option value = "balda">Балда</option>
+                    </select>
+
+
+                    <h4>Настройки</h4>
+                    <div id = "optionsGame">
+
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" type="button">Закрыть</button><button  class="btn btn-primary createGame" type="button">Создать игру </button>
+            </div>
+        </div>
+    </script>
+    <!-- Модальное окно  -->
+
+
+</body>
+
+<script>
+
+
+	requirejs.config({
+		paths: {
+			'mustache': 'mustache/mustache',
+            'bootstrap-dialog' : 'style/bootstrap-3.2.0-dist/js/bootstrap-dialog',
+            'bootstrap' : 'style/bootstrap-3.2.0-dist/js/bootstrap.min'
+		},
+
+
+        shim: {
+
+            'bootstrap' : ['jquery'],
+            'bootstrap-dialog' : ['jquery']
+        }
+
+	});
+
+
+	require(["app","io", "jquery", "games/water_war/water_war"], function(App, Io, $, wr)
+	{
+        Io.init() ;
+		App.init() ;
+	})
+
+</script>
+
+
+</html>
