@@ -3,26 +3,9 @@
 	var app = express();
 	
 
-	var http = require('http').Server(app);
-	var io = require('socket.io')(http);
-	http.listen(3000);
-	
-
-	app.use(express.static(__dirname + '/public'));
-	
-	//Создаем и инициализируем экземпляр платформы
- 	var application = require('./application') ;
-	var platform = new application() ;
-    platform.init() ;
-
-	
-	
-	//Присоеденяемся к игре
-	io.sockets.on('connection', function(socket) 
-	{
-		//Добавляем клиента
-		platform.onSocketHandlers(socket) ;
-	});
+	var port = process.env.PORT || 5000;       
+	app.listen(port)                           // Запускаем сервер на 5000 порту, если не указана переменная окружения "port" 
+	console.log("Listening at " + port)
 	
 	
 	
