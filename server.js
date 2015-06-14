@@ -8,7 +8,7 @@
 	http.listen(3000);
 
 
-    var validator = require('./backend/lib/validator') ;
+    /*var validator = require('./backend/lib/validator') ;
     var configGames = require('./games/config_games') ;
 
 	//Создаем и инициализируем экземпляр платформы
