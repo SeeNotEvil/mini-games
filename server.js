@@ -2,7 +2,7 @@
 	var express = require('express') ;
 	var app = express();
 
-    var fs = require('fs');
+    //var fs = require('fs');
 	var http = require('http').Server(app);
 	io = require('socket.io')(http);
 	http.listen(3000);
@@ -31,7 +31,7 @@
 
 
 
-    app.get('/:path.html', function(req, res){
+    /*app.get('/:path.html', function(req, res){
 
         try {
             fs.readFile(req.params.path + '.html', function (err, data) {
@@ -53,7 +53,7 @@
             });
         }
         catch (e) {}
-    });
+    });*/
 
 
 
