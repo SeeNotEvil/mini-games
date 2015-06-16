@@ -6,7 +6,7 @@ define(function(){
 		
 		init : function() 
 		{
-			Io.socket = io.connect('http://localhost:3000');
+			Io.socket = io.connect(window.location.hostname);
 		}
 
 	};
