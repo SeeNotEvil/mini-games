@@ -5,7 +5,9 @@
     //var fs = require('fs');
 	var http = require('http').Server(app);
 	io = require('socket.io')(http);
-	http.listen(3000);
+
+    var port = process.env.PORT || 3000;
+    http.listen(port);
 
 
     var validator = require('./backend/lib/validator') ;
