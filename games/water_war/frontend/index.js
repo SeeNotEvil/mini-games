@@ -155,17 +155,19 @@
                         case "attackHit" :
                             $('#gameMessage').html('Вы попали в корбаль!!!') ;
                             self.fieldEnemy.hitCell(data.x , data.y) ;
+                            self.fieldEnemy.setBlock(false) ;
                         break ;
 
                         case "attackHitDieSudmarine" :
                             $('#gameMessage').html('Вы подбили корабль!!!') ;
                             self.fieldEnemy.sudmarineDie(data.cells) ;
+                            self.fieldEnemy.setBlock(false) ;
                         break ;
 
                         case "attackMiss" :
                             $('#gameMessage').html('Вы промазали') ;
                             self.fieldEnemy.missCell(data.x , data.y) ;
-                            self.fieldEnemy.setBlock(true) ;
+
                         break ;
                     }
 
@@ -173,7 +175,7 @@
 
 
                 Io.socket.on('attacked', function(data) {
-
+                    console.log("attacked") ;
                     switch(data.state) {
 
                         case "attackedHit" :
@@ -1030,6 +1032,7 @@
 			self.shot = function()
 			{
 
+
 				if(self.block)
 					return ;
 				
@@ -1039,8 +1042,12 @@
 				if(x > 0 || y > 0)
 				{				
 				
-					if(self.mask[x][y] == null)			
-						self.game.shot(x, y) ;
+					if(self.mask[x][y] == null)
+                    {
+                        self.setBlock(true) ;
+                        self.game.shot(x, y) ;
+                    }
+
 
 				}	
 
