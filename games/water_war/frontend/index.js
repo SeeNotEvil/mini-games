@@ -270,8 +270,7 @@
 
                 self.field.setBlock() ;
 
-				for(var i = 0 ; i < self.field.sudmarines.length; i++)
-				{
+				for(var i = 0 ; i < self.field.sudmarines.length; i++) {
 					states[i] = {} ;
 					states[i].cells = [] ;
 					states[i].cells =  self.field.sudmarines[i].cells ;
@@ -314,7 +313,6 @@
         {
 
             for(var i = 0; i <= this.countCell; i++) {
-
                 this.mask[i] = [] ;
 
                 for(var j = 0 ; j <= this.countCell + 1; j++) {
@@ -413,14 +411,11 @@
 			self.sudmarineSort = function(sudmarine)
 			{
 				if(sudmarine.cells[0].x > sudmarine.cells[sudmarine.countCells - 1].x || 
-				   sudmarine.cells[0].y > sudmarine.cells[sudmarine.countCells - 1].y)
-				{
+				   sudmarine.cells[0].y > sudmarine.cells[sudmarine.countCells - 1].y) {
 					
 					var cloneSudmarineCells = createCloneObject(sudmarine.cells) ; 
 					
-					for(var i = 1; i <= sudmarine.countCells; i++)
-					{					
-					
+					for(var i = 1; i <= sudmarine.countCells; i++) {
 						sudmarine.cells[i - 1].x = cloneSudmarineCells[sudmarine.countCells - i ].x ;
 						sudmarine.cells[i - 1].y = cloneSudmarineCells[sudmarine.countCells - i ].y ;
 					} 
@@ -471,34 +466,30 @@
 				
 				var strokes = [] ;
 
-				for(var i = 0 ; i < self.sudmarines.length; i++)
-				{
+				for(var i = 0 ; i < self.sudmarines.length; i++) {
 					
 					var rnd = Math.random() ; var random = (rnd == 0) ? 1 : Math.ceil(rnd * 100) ;
 				
 					var y = Math.floor(random / self.countCell) == 0 ? 1 : Math.floor(random / self.countCell) ;
 					var x = (random % self.countCell == 0) ?  self.countCell : random % self.countCell;
 					
-					if(self.mask[x][y] == null)
-					{					
+					if(self.mask[x][y] == null) {
+
 						//Ставим корабли
-						for(var j = 0 ; j <= self.sudmarines[i].countCells + 1 ; j++)
-						{
+						for(var j = 0 ; j <= self.sudmarines[i].countCells + 1 ; j++) {
+
 							//Смотрим свободны ли стороны							
 							if(y + j - 1 < 0 || y + j - 1 > self.countCell + 1)
 								bottom = false ;
-							else 
-							{
+							else {
 								if(self.mask[x][y + j - 1] != null ||  self.mask[x + 1][y + j - 1] != null || 
 								   self.mask[x - 1][y + j - 1] != null)
 									bottom = false ;
 							}
-							
-							
+
 							if(y - j + 1 < 0 || y - j + 1 > self.countCell + 1)
 								top = false ;
-							else 
-							{	
+							else {
 								if(self.mask[x][y - j + 1] != null ||  self.mask[x + 1][y - j + 1] != null || 
 								   self.mask[x - 1][y - j + 1] != null)
 									top = false ;
@@ -507,8 +498,7 @@
 							 
 							if(x + j - 1 < 0 || x + j - 1 > self.countCell + 1)
 								right = false ;
-							else 
-							{						
+							else {
 								if(self.mask[x + j - 1][y] != null ||  self.mask[x + j - 1][y - 1] != null || 
 								   self.mask[x + j - 1][y + 1] != null)
 									right = false ;
@@ -517,8 +507,7 @@
 							
 							if(x - j + 1 < 0 || x - j + 1 > self.countCell + 1)
 								left = false ;
-							else 
-							{
+							else {
 								if(self.mask[x - j + 1][y] != null ||  self.mask[x - j + 1][y - 1] != null || 
 								   self.mask[x - j + 1][y + 1] != null)
 									left = false ;
@@ -536,38 +525,30 @@
 											
 						random = Math.floor(Math.random() * (strokes.length - 1)) ;	
 
-						if(strokes[random] == 'right')
-						{			
-							for(var j = 0 ; j < self.sudmarines[i].countCells; j++)
-							{
+						if(strokes[random] == 'right') {
+							for(var j = 0 ; j < self.sudmarines[i].countCells; j++) {
 								self.sudmarines[i].cells[j] = new Point(x + j, y) ;			
 								self.mask[x + j][y] = self.sudmarines[i] ;
 							}
 						}
 						
-						if(strokes[random] == 'left')
-						{		
-							for(var j = 0 ; j < self.sudmarines[i].countCells; j++)
-							{		
+						if(strokes[random] == 'left') {
+							for(var j = 0 ; j < self.sudmarines[i].countCells; j++) {
 								self.sudmarines[i].cells[self.sudmarines[i].countCells - j - 1] = new Point(x - j, y) ;
 								self.mask[x - j][y] = self.sudmarines[i] ;
 							}
 						}
 						
-						if(strokes[random] == 'top')
-						{			
-							for(var j = 0 ; j < self.sudmarines[i].countCells; j++)
-							{			
+						if(strokes[random] == 'top') {
+							for(var j = 0 ; j < self.sudmarines[i].countCells; j++) {
 								self.sudmarines[i].cells[self.sudmarines[i].countCells - j - 1] = new Point(x , y - j) ;						
 								self.mask[x][y - j] = self.sudmarines[i] ;
 							}
 						}
 						
 						
-						if(strokes[random] == 'bottom')
-						{
-							for(var j = 0 ; j < self.sudmarines[i].countCells; j++)
-							{						
+						if(strokes[random] == 'bottom') {
+							for(var j = 0 ; j < self.sudmarines[i].countCells; j++) {
 								self.sudmarines[i].cells[j] = new Point(x, y + j) ;							
 								self.mask[x][y + j] = self.sudmarines[i] ;
 							}
@@ -587,8 +568,7 @@
 			
 			self.correctField = function()
 			{
-				for(var i = 0 ; i < self.sudmarines.length; i++)
-				{
+				for(var i = 0 ; i < self.sudmarines.length; i++) {
 					if(!self.sudmarinesPole(self.sudmarines[i])) 
 						return false ;
 				}
@@ -600,12 +580,10 @@
 			//Поворот корабля на угол
 			self.rotateAngle = function(sudmarine, coef, x, y)
 			{
-				
 				var e = 0 - x ; var f = 0 - y ; 				
 				//Поворот направо
 				
-				for(var i = 1; i <= sudmarine.countCells; i++)
-				{
+				for(var i = 1; i <= sudmarine.countCells; i++) {
 					self.mask[sudmarine.cells[i - 1].x][sudmarine.cells[i - 1].y] = null ;
 					sudmarine.cells[i - 1].x = sudmarine.cells[i - 1].x + e ; 
 					sudmarine.cells[i - 1].y = sudmarine.cells[i - 1].y + f ;	
@@ -617,13 +595,11 @@
 				}
 				
 				self.sudmarineSort(sudmarine) ;
-				
 			};
 			
 			self.sudmarineResetPosition = function(clone, sudmarine)
 			{
-				for(var i = 1; i <= sudmarine.countCells; i++)
-				{		
+				for(var i = 1; i <= sudmarine.countCells; i++) {
 					self.mask[clone.cells[i - 1].x][clone.cells[i - 1].y] = sudmarine ;	
 					sudmarine.cells[i - 1].x = clone.cells[i - 1].x ; 
 					sudmarine.cells[i - 1].y = clone.cells[i - 1].y ;	
@@ -659,13 +635,11 @@
 
 				//Проверяем находимся ли мы над полем
 				if(coordinateX > self.x && coordinateX < self.lengthField + self.x &&
-				   coordinateY > self.y && coordinateY < self.y + self.lengthField)
-				{	
+				   coordinateY > self.y && coordinateY < self.y + self.lengthField) {
 					var y = Math.ceil((coordinateY - self.y) / self.lengthCell) ;
 					var x = Math.ceil((coordinateX - self.x) / self.lengthCell) ;
 					
-					if(self.mask[x][y] != null)
-					{	
+					if(self.mask[x][y] != null) {
 						//Запоминаем начальное положение 
 						var sudmarine = self.mask[x][y] ;
 						var clone = createCloneObject(sudmarine) ;
@@ -674,9 +648,7 @@
 									
 						self.rotateAngle(clone, 1, x, y) ;	
 					
-						if(self.sudmarinesPole(clone))
-						{				
-							
+						if(self.sudmarinesPole(clone)) {
 							self.sudmarineResetPosition(clone, sudmarine) ;					
 							self.draw() ;
 							return ;
@@ -685,8 +657,7 @@
 						clone = createCloneObject(sudmarine) ;
 						self.rotateAngle(clone, -1, x, y) ;
 						
-						if(self.sudmarinesPole(clone))
-						{		
+						if(self.sudmarinesPole(clone)) {
 							self.sudmarineResetPosition(clone, sudmarine) ;
 							self.draw() ;
 							return ;
@@ -709,16 +680,13 @@
 				var endY = sudmarine.cells[sudmarine.countCells - 1].y ;
 				
 
-				for(var i = startY - 1 ; i <= endY + 1 ; i++)
-				{
-					for(var j = startX - 1; j <= endX + 1; j++)
-					{
+				for(var i = startY - 1 ; i <= endY + 1 ; i++) {
+					for(var j = startX - 1; j <= endX + 1; j++) {
 						if(i < 0 || i > 11 || j < 0 || j > 11)
 							return false ;
 
 						if(self.mask[j][i] != null )
 							return false ;
-									
 					}
 				}
 			
@@ -727,8 +695,8 @@
 
 
 
-            self.setBlock = function() {
-
+            self.setBlock = function()
+            {
                 if(!self.block) {
 
                     if(self.moveSudmarine != null) {
@@ -759,14 +727,12 @@
 				var mouseCoordinate = self.getMouseCoordinate(e) ;
 
 				//Проверяем находимся ли мы над полем
-                if(self.inField(mouseCoordinate.x, mouseCoordinate.y))
-				{
+                if(self.inField(mouseCoordinate.x, mouseCoordinate.y)) {
 
 					var y = Math.ceil((mouseCoordinate.y - self.y) / self.lengthCell) ;
 					var x = Math.ceil((mouseCoordinate.x - self.x) / self.lengthCell) ;
 					
-					if(self.mask[x][y] != null)
-					{
+					if(self.mask[x][y] != null) {
                         $('#canvas').css("cursor", "move") ;
 
                         self.moveSudmarine = self.mask[x][y] ;
@@ -784,9 +750,7 @@
 						{
                             var mouseCoordinate = self.getMouseCoordinate(e) ;
 
-                            if(self.inField(mouseCoordinate.x, mouseCoordinate.y))
-
-							{
+                            if(self.inField(mouseCoordinate.x, mouseCoordinate.y)) {
 
                                 $("#body").css("cursor : move") ;
 
@@ -796,28 +760,22 @@
 								var nextX = 0;
 								var nextY = 0;
 
-
-								if(newY != y || newX !=x)
-								{
+								if(newY != y || newX !=x) {
 									stepX = newX - x + stepX ;
 									stepY = newY - y + stepY;
 
-									for(var i = 1; i <= self.moveSudmarine.countCells; i++)
-									{
+									for(var i = 1; i <= self.moveSudmarine.countCells; i++) {
 										nextX = self.moveSudmarine.cells[i - 1].x  + stepX ;
 										nextY = self.moveSudmarine.cells[i - 1].y  + stepY ;
 
 										if(nextX < 1 ||  nextX > self.countCell || nextY < 1 ||
-										   nextY > self.countCell)
-										{
+										   nextY > self.countCell) {
 											newPosition = false ;
 										}
 									}
 
-									if(newPosition)
-									{
-										for(var i = 1; i <= self.moveSudmarine.countCells; i++)
-										{
+									if(newPosition) {
+										for(var i = 1; i <= self.moveSudmarine.countCells; i++) {
                                             self.moveSudmarine.cells[i - 1].x  = self.moveSudmarine.cells[i - 1].x + stepX ;
                                             self.moveSudmarine.cells[i - 1].y  = self.moveSudmarine.cells[i - 1].y + stepY ;
 										}
@@ -834,10 +792,8 @@
 							}
 						};
 
-
 						var upSudmarine = function(e)
 						{
-
                             self.sudmarineSetNewPosition(self.moveSudmarine) ;
 
 							$(self.game.canvas).unbind('mousemove.sudmarine', moveSudmarine) ;
@@ -853,27 +809,19 @@
 						$(self.game.canvas).on('mouseup.sudmarine', upSudmarine) ;
 
 					}
-
-				}
-			
+                }
 			};
 
 
             self.sudmarineSetNewPosition = function(sudmarine) {
 
-                console.log(sudmarine) ;
-                if(self.sudmarinesPole(sudmarine))
-                {
-                    for(var i = 1; i <= sudmarine.countCells; i++)
-                    {
+                if(self.sudmarinesPole(sudmarine)) {
+                    for(var i = 1; i <= sudmarine.countCells; i++) {
                         self.mask[sudmarine.cells[i - 1].x][sudmarine.cells[i - 1].y] = sudmarine ;
                     }
-
                 }
-                else
-                {
-                    for(var i = 1; i <= sudmarine.countCells; i++)
-                    {
+                else {
+                    for(var i = 1; i <= sudmarine.countCells; i++) {
                         sudmarine.cells[i - 1].x = sudmarine.lastCells[i - 1].x ;
                         sudmarine.cells[i - 1].y = sudmarine.lastCells[i - 1].y ;
                         self.mask[sudmarine.lastCells[i - 1].x][sudmarine.lastCells[i - 1].y] = sudmarine ;
@@ -894,11 +842,8 @@
 			{			
 				self.clearField() ;
 				
-				for(var i = 1; i <= self.countCell; i++)
-				{
-					for(var j = 1 ; j <= self.countCell; j++)
-					{			
-						
+				for(var i = 1; i <= self.countCell; i++) {
+					for(var j = 1 ; j <= self.countCell; j++) {
 						self.game.drawContext.lineWidth = 2;
 						self.game.drawContext.strokeRect(self.x + self.lengthCell * (i - 1), self.y + self.lengthCell * (j - 1), 
 													     self.lengthCell, self.lengthCell);
@@ -907,9 +852,7 @@
 				}	
 
 				//Рисуем корабли
-				for(var i = 0 ; i < self.sudmarines.length; i++)
-				{
-
+				for(var i = 0 ; i < self.sudmarines.length; i++) {
 					if(self.sudmarines[i] != null)
                         self.sudmarines[i].draw(self.x, self.y, self.lengthCell, self.game.drawContext) ;
 
@@ -984,7 +927,6 @@
             //Блокировка поля
             self.setBlock = function(block)
             {
-
                 if(block)
                     $("#canvas").css("cursor" , "default") ;
 
@@ -993,7 +935,6 @@
 
 			self.hover = function(e)
 			{
-
 				if(self.block)
 					return ;
 
@@ -1002,9 +943,7 @@
 					
 				//Проверяем находимся ли мы над полем
 				if(coordinateX > self.x && coordinateX < self.lengthField + self.x
-										&& coordinateY > self.y && coordinateY < self.y + self.lengthField)
-				{
-
+										&& coordinateY > self.y && coordinateY < self.y + self.lengthField) {
 
                     $("#canvas").css("cursor" , "pointer") ;
 					var y = Math.ceil((coordinateY - self.y) / self.lengthCell) ;
@@ -1018,8 +957,7 @@
                         self.draw() ;
 
 				}
-				else
-				{
+				else {
 					if(self.cellsFill.x != 0 || self.cellsFill.y != 0) {
                         self.draw() ;
                     }
@@ -1031,8 +969,6 @@
 			//Событие бьем по ячейке
 			self.shot = function()
 			{
-
-
 				if(self.block)
 					return ;
 				
@@ -1040,15 +976,11 @@
 				var y = self.cellsFill.y ;
 				
 				if(x > 0 || y > 0)
-				{				
-				
-					if(self.mask[x][y] == null)
-                    {
+				{
+					if(self.mask[x][y] == null) {
                         self.setBlock(true) ;
                         self.game.shot(x, y) ;
                     }
-
-
 				}	
 
 			};
@@ -1056,23 +988,19 @@
 			//Убиваем судмарину =(
 			self.sudmarineDie = function(cells)
 			{
-				
 				var startX = cells[0].x ;
 				var endX = cells[cells.length - 1].x ;
 				var startY = cells[0].y ;
 				var endY = cells[cells.length - 1].y ;
 				
-				for(var key in cells)
-				{
+				for(var key in cells) {
 					var cell = cells[key] ;
 					self.mask[cell.x][cell.y] = 2 ;
 				
 				}
 				
-				for(var i = startY - 1 ; i <= endY + 1 ; i++)
-				{
-					for(var j = startX - 1; j <= endX + 1; j++)
-					{
+				for(var i = startY - 1 ; i <= endY + 1 ; i++) {
+					for(var j = startX - 1; j <= endX + 1; j++) {
 						if(j < 0 || j > 10 || i < 0 || i > 10)
 							continue ;
 						
@@ -1100,10 +1028,8 @@
 			{
 				self.drawClearField() ;
 				
-				for(var i = 1; i <= self.countCell; i++)
-				{
-					for(var j = 1 ; j <= self.countCell; j++)
-					{
+				for(var i = 1; i <= self.countCell; i++) {
+					for(var j = 1 ; j <= self.countCell; j++) {
 						
 						self.game.drawContext.lineWidth = 2;
 			
@@ -1123,8 +1049,7 @@
 			//Окрасить ячейку в темный свет
 			self.drawFillCell = function(x, y)
 			{	
-				if(self.cellsFill.x != x || self.cellsFill.y != y)
-				{
+				if(self.cellsFill.x != x || self.cellsFill.y != y) {
 					self.draw() ;
 					self.game.drawContext.fillRect(self.x + self.lengthCell * (x - 1), 
 										  self.y + self.lengthCell * (y - 1), 
@@ -1151,7 +1076,6 @@
 			//Окраска ячейки промах
 			self.drawMissCell = function(x, y)
 			{
-				
 				var centerX = self.x + x * self.lengthCell - self.lengthCell / 2 ;
 				var centerY = self.y + y * self.lengthCell - self.lengthCell / 2 ;
 				var radius = self.lengthCell / 8 ;
@@ -1167,20 +1091,15 @@
 
         util.inherits(fieldEnemy, fieldBase) ;
 
-
-
 		function createCloneObject(o) 
 		{
-			if(!o || "object" !== typeof o) 
-			{
+			if(!o || "object" !== typeof o) {
 				return o;
 			}
 			var c = "function" === typeof o.pop ? [] : {};
 			var p, v;
-			for(p in o) 
-			{
-				if(o.hasOwnProperty(p)) 
-				{
+			for(p in o) {
+				if(o.hasOwnProperty(p)) {
 					v = o[p];
 					if(v && "object" === typeof v) 
 					{
@@ -1193,7 +1112,6 @@
 		}
 
 
-		
 		//Обьект корабль
 		var sudmarine = function(countCells)
 		{
@@ -1219,7 +1137,6 @@
             drawContext.strokeRect(x + lengthCell  * (this.cells[0].x - 1), y + lengthCell * (this.cells[0].y  - 1), lengthX, lengthY);
 
         };
-
 
 		return waterWar ;
 		

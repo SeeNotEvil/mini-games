@@ -1,75 +1,62 @@
 /**
  * Класс валидации
+ * Правило валидации должно удовлетворять сигнатуре  : название - function (value, arguments, name)
+ * , где value
  */
 
 (function() {
 
-
-    var Validator = module.exports = function () {
-
+    var Validator = function () {
         this.errors = {};
-
         this.onError = true;
-
         this.validateInfo = {};
-
         return this;
-
     };
 
-
+    /**
+     * Получить массив ошибок
+     */
     Validator.prototype.getErrors = function () {
-
         return this.errors;
-
     };
 
-
-    Validator.prototype.doValidateArray = function (array, del) {
-
+    /**
+     *
+     * @param array - массив значений
+     * @param {boolean} del - удаляет те свойства которых нет в правилах для валидации
+     * @returns {boolean}
+     */
+    Validator.prototype.doValidateArray = function (array, del)
+    {
         var isValidation = true;
 
         for (var key in array) {
-
             if (this.validateInfo[key] != undefined) {
-
                 var validators = this.validateInfo[key];
 
                 if (validators.length > 0) {
-
                     for (var i = 0; i < validators.length; i++) {
-
                         var validator = validators[i];
-
                         var name = "";
                         var arguments = {};
 
-
                         if (validator instanceof Array) {
-
                             if (validator[0] != undefined) {
                                 name = validator[0];
                             }
-
                             if (validator[1] != undefined) {
                                 arguments = validator[1];
                             }
-
                         }
                         else {
-
                             name = validator;
-
                         }
 
                         if (this[name] != undefined) {
-
                             if (!this[name](array[key], arguments))
                                 isValidation = false;
                         }
                     }
-
-
                 }
             }
             else {
@@ -77,15 +64,18 @@
                     delete(array[key]);
                 }
             }
-
         }
 
         return isValidation;
-
     };
 
-    Validator.prototype.setConfig = function (config) {
-
+    /**
+     * Установить конфиг
+     * config.error {boolean} - включает , выключает сбор ошибок
+     * config.validateInfo - массив правил валидации
+     */
+    Validator.prototype.setConfig = function (config)
+    {
         if (config.error != undefined) {
             if (config.error == 'on')
                 this.onError = true;
@@ -94,21 +84,29 @@
         }
 
         if (config.validateInfo != undefined)
-            this.validateInfo = config.validateInfo;
+            this.setValidateInfo(this.validateInfo);
 
         return this;
     };
 
+
+    Validator.prototype.setValidateInfo= function(validateInfo)
+    {
+        this.validateInfo = validateInfo;
+        return this ;
+    };
+
     Validator.prototype.init = function (config)
     {
-
         if (config != undefined)
             this.setConfig(config);
 
         return this;
     };
 
-    //Добавление ошибки
+    /**
+     * Добавление ошибки
+     */
     Validator.prototype.addError = function (name, text)
     {
         if (this.onError) {
@@ -126,15 +124,14 @@
      * @param name
      * @returns {boolean}
      */
-    Validator.prototype.required = function (value, arguments, name) {
-
+    Validator.prototype.required = function (value, arguments, name)
+    {
         if (value == "") {
             this.addError(name, " Поле  должно быть непустым ");
             return false;
         }
 
         return true;
-
     };
 
     /**
@@ -145,7 +142,8 @@
      */
     Validator.prototype.isInt = function (value, arguments, name)
     {
-        if (!/\s(0-9)/.test(value)) {
+
+        if (!/^\d+$/.test(value)) {
             this.addError(name, " Поле  должно быть числом ");
             return false;
         }
@@ -163,7 +161,7 @@
         }
 
         if (!flag)
-            this.addError(name, " Поле не должно быть числом в диапозоне от " + arguments.min + "до" + arguments.max);
+            this.addError(name, " Поле должно быть числом в диапозоне от " + arguments.min + "до" + arguments.max);
 
         return flag;
     };
@@ -193,15 +191,12 @@
 
 
     if (typeof define === 'function' && define.amd) {
-
         define(function() {
             return Validator ;
         })
     }
     else if (typeof exports !== 'undefined') {
-
         module.exports = Validator ;
     }
-
 
 })() ;

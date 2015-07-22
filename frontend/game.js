@@ -7,16 +7,12 @@ define("game", ["app", "io"], function(App, Io){
 	{
 
         this.directoryGame = options.directory || "games";
-
         //Модули
         this.modules = [] ;
-
         //Опции самой игры
         this.optionsGame = self.optionsGame != undefined ? this.optionsGame : {} ;
-
         //Опции игрока
         this.optionsPlayer = {} ;
-
         //Флаг инициализации
         this.initialization = false ;
 	};
@@ -37,25 +33,22 @@ define("game", ["app", "io"], function(App, Io){
         this.setOptionsPlayer(optionsPlayer) ;
 
         Io.socket.on('startGame', function (data) {
-
             self.startGame(data) ;
-
         }) ;
 
         this.loadedResources(cb) ;
 	};
 
     /**
-     *  Загрузка ресурсов
+     *  Старт игры
      */
-
     game.prototype.startGame = function()
     {
-
-
-
     };
 
+    /**
+     *  Загрузка ресурсов
+     */
     game.prototype.loadedResources = function(cb)
     {
         cb() ;
@@ -66,13 +59,10 @@ define("game", ["app", "io"], function(App, Io){
      */
 	game.prototype.setOptionsGame = function(optionsGame)
 	{
-		for(var key in optionsGame)
-		{
+		for(var key in optionsGame) {
 			if(this.optionsGame[key] != undefined)
 				this.optionsGame[key]  = optionsGame[key] ;
-
-		}	
-	
+		}
 	};
 
 
@@ -81,9 +71,8 @@ define("game", ["app", "io"], function(App, Io){
      */
     game.prototype.setOptionsPlayer = function(optionsPlayer)
     {
-
         this.optionsPlayer = optionsPlayer ;
-        console.log(this.optionsPlayer) ;
+        //console.log(this.optionsPlayer) ;
     };
 
     /**
@@ -104,11 +93,8 @@ define("game", ["app", "io"], function(App, Io){
 
         //Загружаем модули
 		for(var i = 0 ; i < modules.length ; i++)
-		{		
-
+		{
             (function(options) {
-
-
                 require([App.appModel.get("moduleDirectory") + modules[i].name + "/frontend/index"], function (module) {
 
                     var newModule = new module();
@@ -120,12 +106,9 @@ define("game", ["app", "io"], function(App, Io){
                             if(countLoadedModules == countModules)
                                 cb() ;
                         }
-
                     });
 
                     self.modules.push(newModule);
-
-
                 });
 
             })(modules[i].options) ;
@@ -146,7 +129,6 @@ define("game", ["app", "io"], function(App, Io){
      */
 	game.prototype.offModules = function()
 	{
-
 		for(var i = 0 ; i < this.modules.length ; i++) {
 			this.modules[i].destroy() ;	
 		}
@@ -158,12 +140,9 @@ define("game", ["app", "io"], function(App, Io){
 	game.prototype.destroyGame = function()
 	{
         Io.socket.removeListener('startGame') ;
-
-
 		this.offModules() ;
 		App.destroyGame() ;
 	};
-
 
     /**
      *  Событие выхода из игры
@@ -174,8 +153,7 @@ define("game", ["app", "io"], function(App, Io){
         this.destroyGame() ;
 
     };
-	
-	
+
 	return game ;
 }) ;
 

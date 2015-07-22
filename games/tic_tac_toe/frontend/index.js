@@ -60,11 +60,8 @@
                     else
                         self.field = new field(200, 100, self.optionsGame.countCells, 90, self);
 
-
-
                     self.opponent = new player(self.optionsPlayer.opponent.login , self.optionsPlayer.opponent.step) ;
                     self.user = new player(self.optionsPlayer.nowPlayer.login , self.optionsPlayer.nowPlayer.step) ;
-
 
                     self.initCanvas() ;
                     self.onSocketHandlers() ;

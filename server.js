@@ -2,15 +2,13 @@
 	var express = require('express') ;
 	var app = express();
 
-    //var fs = require('fs');
 	var http = require('http').Server(app);
 	io = require('socket.io')(http);
 
     var port = process.env.PORT || 3000;
     http.listen(port);
 
-
-    var validator = require('./backend/lib/validator') ;
+    var validator = require('./common/lib/validator') ;
     var configGames = require('./games/config_games') ;
 
 	//Создаем и инициализируем экземпляр платформы
@@ -26,9 +24,7 @@
 
     //Событие присоеденение к игре
     io.sockets.on('connection', function(socket) {
-
         platform.onSocketHandlers(socket) ;
-
     });
 
 
@@ -56,7 +52,6 @@
         }
         catch (e) {}
     });
-
 
 
     app.use(express.static(__dirname));

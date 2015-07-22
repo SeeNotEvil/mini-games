@@ -7,7 +7,6 @@
 	var application = module.exports = function()
 	{
 		var self = this ;
-
 		self.games = [] ;
 		self.users = [] ;
 
@@ -15,39 +14,30 @@
         self.startDate = null ;
 		self.interval = {} ;
 
-
         //Директории для игр и модулей
         self.gameDirectory = "../games" ;
         self.moduleDirectory = "../module" ;
 
-        self.validator = {} ;
+        //Валидатор
+        self.validator = null ;
 
         //Кол-во игр
         self.countGame = 0 ;
 
         //Кол-во игроков в играх
         self.countUsersInGame = 0 ;
-
         self.configGames = {} ;
 
-		self.onSocketHandlers = function(socket){
-			
+		self.onSocketHandlers = function(socket)
+        {
 			socket.on('sendLogin', self.authorizeUser) ;
-			
 			socket.on('showFreeGames', self.showFreeGames) ;
-	
 			socket.on('disconnect', self.userDisсonnect) ;
-
             socket.on('showMenu', self.showMenu) ;
-			
 			socket.on('hostingGame', self.hostingGame)  ;
-		
-			socket.on('connectingToGame', self.connectionUserToGame) ; 
-			
+			socket.on('connectingToGame', self.connectionUserToGame) ;
 			socket.on('initGamePlayers', self.initGamePlayers) ;
-
             socket.on('showStatistic', self.showStatistic) ;
-
             socket.on('exitGame', self.exitGame) ;
         } ;
 
@@ -59,18 +49,15 @@
         self.init = function(config)
         {
             self.configGames = config.configGames || {} ;
-
             self.validator = config.validator ;
 
             self.startTimer(40, 10, self.interval, function(time) {
                 var state = self.getStatistic() ;
 
                 for(var key in self.users) {
-
                     if(self.users[key].location != "game")
                         self.users[key].socket.emit('updateStatistic', state) ;
                 }
-
             }) ;
 
         };
@@ -84,7 +71,6 @@
 
             if(self.users[id] != undefined)    {
                 var states = self.getStatistic() ;
-
                 callback(states) ;
             }
 
@@ -92,20 +78,15 @@
 
         /**
          * Переход в меню
+         * Отдаем свободные игры и статистику
          */
         self.showMenu = function(data, callback)
         {
-
             var id = this.id.toString() ;
-
             self.users[id].location = "menu" ;
-
             var games = self.getFreeGames() ;
-
             self.users[id].socket.emit('showFreeGames', {games : games}) ;
-
             var state = self.getStatistic() ;
-
             self.users[id].socket.emit('updateStatistic', state) ;
         };
 
@@ -119,13 +100,14 @@
 
             if(self.users[id] != undefined) {
                 var games = self.getFreeGames() ;
-
                 callback({games: games}) ;
             }
         } ;
 
 
-        //Сбор статистики
+        /**
+         * Сбор статистики
+         */
         self.getStatistic = function()
         {
             var states = {} ;
@@ -157,14 +139,14 @@
 
         };
 
-
-		//Авторизация пользователя 
+        /**
+         * Авторизация пользователя
+         */
 		self.authorizeUser = function(data, callback)
 		{
 			var socket = this ; var id = socket.id.toString() ; var login = data.login ;
 
 			if(login != undefined || login != '') {
-
 				self.users[id] = new user(socket, id, login) ;
                 self.users[id].location = "menu" ;
 
@@ -173,7 +155,6 @@
                     userId : id,
                     login: login
                 }) ;
-			
 			}
 			else
 				callback({
@@ -188,7 +169,6 @@
          */
         self.leavePlayerGame = function(id)
         {
-
             //Получаем игру
             var game = self.users[id].game ;
 
@@ -199,19 +179,16 @@
 
                 //Если игра неиницилизирована
                 if (!game.initialization) {
-
                     if (game.isFull())
                         self.stopTimer(game.interval);
 
                     //Если вышел создатель игры
                     if (game.creatorGame == self.users[id]) {
-
                         //Удаляем игрока
                         game.deletePlayerId(id);
 
                         //Информируем всех игроков
                         for (var i = 0; i < game.players.length; i++) {
-
                             game.players[i].user.socket.emit('creatorLeaveGameLobby', {name: self.users[id].login});
                             game.players[i].user.game = null ;
                         }
@@ -225,14 +202,11 @@
 
                         //Информируем игроков
                         for (var i = 0; i < game.players.length; i++){
-
                             game.players[i].user.socket.emit('playerLeaveGameLobby', {name: self.users[id].login});
                         }
                     }
-
                     //Обновляем информацию по комнатам у юзеров
                     self.showUsersFreeGames()  ;
-
                 }
                 else {
                     //Передаем управление самой игре
@@ -247,9 +221,7 @@
          */
 		self.userDisсonnect = function(data)
 		{
-			
 			var id = this.id.toString() ;
-
             if(self.users[id] == undefined)
                 return ;
 
@@ -259,7 +231,6 @@
             //Удаление пользователя
 			self.deleteUser(id) ;
 
-
 		} ;
 
         /**
@@ -267,14 +238,12 @@
          */
         self.exitGame = function(data, callback)
         {
-
             var id = this.id.toString() ;
 
             if(self.users[id] == undefined)
                 return ;
-				
-            self.leavePlayerGame(id) ;
 
+            self.leavePlayerGame(id) ;
             //Перемещаем его в меню
             self.users[id].location = "menu" ;
 
@@ -298,11 +267,9 @@
          */
 		self.deleteGame = function(key)
 		{
-
             self.games[key] = null ;
 			delete self.games[key];
             self.countGame -- ;
-		
 		} ;
 
 
@@ -336,9 +303,7 @@
 
                 //Ставим игру
 				creatorGame.game = game;
-
                 self.games[userId] = game ;
-
 				self.countGame++ ;
 
                 //Ответ клиенту
@@ -359,9 +324,7 @@
          */
  		self.connectionUserToGame = function(data)
 		{
-
 			var userId = this.id.toString() ;
-
             var gameId = data.gameId ;
 			
 			if(self.users[userId] == undefined || gameId == undefined)
@@ -373,11 +336,10 @@
 			
 			//Если такая игра действительно существует,она не явлеятся заполненной , и игрок не играет
 			if(self.games[gameId] !== undefined && !self.games[gameId].isFull() && !self.games[gameId].initialization){
+
 				//Записываем что игрок находится в лобби
 				self.users[userId].location = "lobby" ;
-
 				self.users[userId].game = self.games[gameId] ;
-
 				self.games[gameId].addPlayer(self.users[userId]) ;
 
                 //Информируем всех игроков о присоеденении
@@ -404,20 +366,17 @@
                                                                     optionsGame: game.options}) ;
 				else
 					players[key].user.socket.emit('connectedUserGame', {name : players[key].user.login}) ;
-			}	
-		
+			}
 		};
 
         /**
          * Подготовка к запуску игры
          */
-		self.preparationGame = function(game){
-					
-			self.startTimer(10, 1, game.interval, function(time, interval)
-			{
+		self.preparationGame = function(game)
+        {
+			self.startTimer(10, 1, game.interval, function(time, interval) {
 
 				if(time <= 0 && game.isFull()){
-
 					self.stopTimer(game.interval) ;
 
                     //Инициализируем игру
@@ -440,15 +399,12 @@
 
                         //Обновляем статистику
                         self.showUsersFreeGames() ;
-
-
                     }) ;
 				}
 			})	;
 
             //Информируем игроков об начале подготовки к игре
-			for(var key in game.players)
-			{
+			for(var key in game.players) {
 				game.players[key].user.socket.emit('readyToStartGameTimer', {time : 10}) ;				
 			}
 		} ;
@@ -459,19 +415,14 @@
 
 		self.startTimeInitGamePlayers = function(game)
 		{
-		
-			self.startTimer(40, 1,  game.interval, function(time)
-			{
+			self.startTimer(40, 1,  game.interval, function(time) {
                 //Если время вышло
-				if(time <= 0)
-				{
-                    //Отправляем игрокам что один из игроков незагрузился
-					for(var key in game.players)
-					{
+				if(time <= 0) {
 
+                    //Отправляем игрокам что один из игроков незагрузился
+					for(var key in game.players) {
 						if(game.players[key].initGame)
 							game.players[key].user.socket.emit('playersLongTime', {}) ;
-
                         self.stopTimer(game.interval) ;
 					}		
 				}
@@ -483,61 +434,48 @@
          */
 		self.initGamePlayers = function(data)
 		{
-			
 			var id = this.id.toString() ;
-			
 			if(self.users[id] == undefined)	
 				return ;
 			
 			var game = self.users[id].game ;
-
 			if(game == null)
 				return ;
 					
-			var player = game.getPlayerId(id) ; 
-
+			var player = game.getPlayerId(id) ;
 
             //Если игроки неиницолизировали свои игры на клиента и игрок еще неинициализировал игру
-			if(!game.playersInitGame() && !player.initGame)
-			{
+			if(!game.playersInitGame() && !player.initGame) {
 				player.initGame = true ;
 				game.countInitPlayer++ ;
 			}
 
             //Если все игроки готовы к запуску игры
-			if(game.playersInitGame()) 
-			{
-
+			if(game.playersInitGame()) {
 				game.startGame() ;
 				self.stopTimer(game.interval) ;
 			}	
 		} ;
-
 
         /**
          * Отправляем всем пользователям в меню что создана новая игра
          */
 		self.showUsersFreeGames = function()
 		{
-			
-			var games = self.getFreeGames() ;	
-												
-			for(var key in self.users)	{
+			var games = self.getFreeGames() ;
 
+			for(var key in self.users)	{
 				if(self.users[key].location == 'menu') {
                     self.users[key].socket.emit('showFreeGames', {games : games}) ;
                 }
-
 			}
-
 		} ;
-
 
         /**
          *  Выполнение таймера
          */
-		self.startTimer = function(startTime, delay, interval, callback) {
-
+		self.startTimer = function(startTime, delay, interval, callback)
+        {
 			var time = startTime * 1000 ;
 			var delay =  delay * 1000 ;
 
@@ -557,7 +495,6 @@
 			clearInterval(interval.int) ;
 		} ;
 
-
         /**
          *   Показать свободные игры
          */
@@ -567,9 +504,7 @@
 			var i = 0 ;
 			
 			for(var key in self.games){
-
 				if(self.games[key].initialization == false){
-
 					states[i] = {} ;
 					states[i].gameId = key ;
 					states[i].time = self.games[key].time ;
@@ -580,9 +515,8 @@
 					states[i].isFull = self.games[key].isFull() ;
 					i++ ;
 				}
-			
 			}
-			
+
 			return states ;
 		} ;
 
@@ -592,12 +526,9 @@
                 return undefined ;
 
             if(self.configGames[titleGame].rules != undefined) {
-
                 if(!self.validator.setConfig(self.configGames[titleGame].rules).doValidateArray(options, false))
                     return undefined ;
-
             }
-
 
             var game = require(self.gameDirectory + '/' +  titleGame + '/backend/index');
 
@@ -608,17 +539,13 @@
                     creatorGame : creatorGame,
                     optionsGame : options
             }) ;
-
-
-
-
         };
 
         /**
          * Уничтожение игры
          */
-		self.destroyGame = function(gameId)	{
-
+		self.destroyGame = function(gameId)
+        {
 			if(self.games[gameId] == undefined)
 				return ;
 
@@ -627,7 +554,6 @@
 			}
 			
 			self.deleteGame(gameId) ;
-				
 		};
 
         return this ;
@@ -637,18 +563,13 @@
 	/**
      * Пользователь платформы
      */
-	var user = function(socket, id, login){
+	var user = function(socket, id, login)
+    {
         var self = this;
-
         self.socket = socket;
-
         self.location = "none";
-
         self.login = login;
-
         self.id = id;
-
         self.game = null;
+        self.lobby = null;
     } ;
-
-

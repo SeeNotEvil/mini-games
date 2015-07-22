@@ -3,39 +3,30 @@
 	 * Базовый прототип игры
      * Выполняет минимальные функции игры
      * constructOptions опции для создания игры
+     * В будущем планируется сделать отдельный класс лобби для игрков, а игры отдельно
      */
 
     var game = module.exports.game = function(constructOptions)
 	{
 		var self = this ;
-
         //Массив игроков
         self.players = [] ;
-
         //Стартанула ли игра
         self.started = false ;
-
         //Кол - во инициализированных игроков
         self.countInitPlayer = 0 ;
-
         //Максимальное кол - во игроков
         self.maxCountPlayer = self.maxCountPlayer != undefined ? self.maxCountPlayer : 2 ;
-
         //Текущее кол - во игроков
         self.countPlayer = 0 ;
-
         //Инициализирована ли игра
         self.initialization = false ;
-
         //Интервал для тиндивидуального таймера игры
         self.interval = {int : null} ;
-
         //Массив модулей
         self.modules = [] ;
-
+        //Опции игры
         self.options = self.options != undefined ? self.options : {} ;
-
-
         //Установка основных настроек
         self.setConstructOption(constructOptions) ;
 
@@ -49,28 +40,18 @@
      */
 	game.prototype.setConstructOption = function(constructOptions)
     {
-
         //Дата создания
         this.time = constructOptions.date ;
-
         //Название игры
         this.titleGame = constructOptions.titleGame ;
-
-
         //Создатель игры
         this.creatorGame = constructOptions.creatorGame ;
-
         //id Игры
         this.gameId = constructOptions.userId;
-
-
         //Установка игровых опций
         this.setGameOption(constructOptions.optionsGame) ;
-
         //Добавляем игрока в игру
         this.addPlayer(this.creatorGame) ;
-
-
 
     };
 
@@ -79,7 +60,6 @@
      */
 	game.prototype.init = function(cb)
 	{
-
 		this.initialization = true ;
 		this.initModules() ;
         cb() ;
@@ -90,7 +70,6 @@
      */
 	game.prototype.startGame = function()
 	{
-
 		this.started = true;
 
         for(var i=0; i < this.players.length; i++) {
@@ -99,25 +78,17 @@
 
 	};
 
-
-
     /**
      *  Добавление игрока
      */
     game.prototype.addPlayer = function(user)
     {
-
-
-        if(!this.isFull())
-        {
+        if(!this.isFull()) {
             var player = this.createGamePlayer(user) ;
-
             this.players.push(player)  ;
             this.countPlayer++ ;
         }
     };
-
-
 
     /**
      *  Проверка готовы ли все пользователи к игре
@@ -140,8 +111,7 @@
      */
     game.prototype.setGameOption = function(options)
     {
-        for(var key in options)
-        {
+        for(var key in options) {
             if( this.options[key] != undefined)
                 this.options[key] = options[key] ;
         }
@@ -152,7 +122,6 @@
      */
     game.prototype.getOptionsPlayer = function(key)
     {
-
         if(this.players[key] != undefined)
              return this.players[key].options ;
     };
@@ -165,16 +134,13 @@
 	game.prototype.disconnectPlayer = function(id)
 	{	
 		var player = this.getPlayerId(id)  ;
-		
 		if(player == undefined)
 			return false ;
 
 		var name = player.login ;
-
 		this.deletePlayer(player) ;
 
-		for(var i = 0 ; i < this.players.length; i++)
-		{
+		for(var i = 0 ; i < this.players.length; i++) {
 			this.players[i].user.socket.emit('playerDisconnectedGame' , {name : name}) ;
 		}		
 	};
@@ -186,18 +152,16 @@
 	game.prototype.initModules = function()
 	{
 		var self = this ;
-		
 		var modules = self.getModulesOptions() ;
-			
 
-		for(var i = 0 ; i < modules.length ; i++)
-		{		
+        for(var i = 0 ; i < modules.length ; i++) {
 			var options = modules[i].options ;
 			var module = require(platform.moduleDirectory + '/' + modules[i].name +'/backend/index') ;
 			var newModule = new module() ;
 			newModule.init(options) ;
 			self.modules.push(newModule) ;
 		}
+
 	};
 
     /**
@@ -205,11 +169,8 @@
      */
 	game.prototype.offModules = function()
 	{
-       
-		for(var i = 0 ; i < this.modules.length ; i++)
-		{
-			if(this.modules[i] != null)
-			{
+		for(var i = 0 ; i < this.modules.length ; i++) {
+			if(this.modules[i] != null) {
                 console.log("destroy module" + i) ;
 				this.modules[i].destroy() ;	
 				this.modules[i] = null ;	
@@ -240,7 +201,6 @@
      * Удаляем игрока
      * player - экземпляр игрока
      */
-
 	game.prototype.deletePlayer = function(player)
     {
 		var index = this.players.indexOf(player) ;
@@ -265,7 +225,6 @@
 
         this.deletePlayer(player) ;
 
-
     };
 
     /**
@@ -284,9 +243,7 @@
      */
 	game.prototype.destroyGame = function() 
 	{
-
 		this.offModules() ;
-
         //Вызываем событие платформы
 		platform.destroyGame(this.gameId) ;
 
@@ -297,13 +254,11 @@
      */
 	game.prototype.getPlayerId = function(id)
 	{
-		for(var i = 0 ; i < this.players.length; i++)
-		{
+		for(var i = 0 ; i < this.players.length; i++) {
 			if(this.players[i] == undefined)
 				return undefined ;
 					
-			if(this.players[i].user.id == id)	
-			{			
+			if(this.players[i].user.id == id) {
 				return this.players[i] ;				
 			}	
 		}
@@ -311,9 +266,7 @@
 		return undefined ;	
 	};
 	
-	
 
-	
 	/**
 		Базовый прототип игрока
 	*/
@@ -322,9 +275,7 @@
 		var self = this ;
 	
 		self.initGame = false ;
-
         self.options = {} ;
-
 		self.user = user ;
 
 	} ;

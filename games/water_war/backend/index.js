@@ -9,45 +9,29 @@
 	var waterWar = module.exports = function(constructOptions)
 	{
 
-
         var self = this ;
 
-
 		self.nowPlayer = null ;
-		
 		self.opponent = null ;
-		
 		self.countReadyPlayer = 0 ;
 		
 
         self.options = {
-
             timePreparation : 60 ,
-
             timeMove : 20
-
         };
 
-
-
-		
 		//Функция инициализации 
 		self.init = function(cb)
 		{
-
 			self.timeMove = self.options.timeMove ;
-
 			self.timePreparation = self.options.timePreparation ;
-			
 
-			
 			self.onSocketHandlers() ;
 
-            for(var i = 0 ; i < self.players.length; i++)
-            {
+            for(var i = 0 ; i < self.players.length; i++) {
                 self.players[i].options.opponent = self.players[i] == self.players[0] ? self.players[1].user.login :
                                                                                         self.players[0].user.login ;
-
             }
 
             waterWar.super_.prototype.init.apply(self, arguments);
@@ -55,29 +39,31 @@
 		};
 		
 		
-		self.getModulesOptions = function() {
-
+		self.getModulesOptions = function()
+        {
 			return [{
                 name : "./chat" ,
                 options : {players: self.players}
 			}] ;
-
 		};
 		
 
-		self.startGame = function() {
+		self.startGame = function()
+        {
 			waterWar.super_.prototype.startGame.apply(this, arguments);
 			self.preparationToGame() ;
 		};
 		
-		self.swapPlayers = function() {
+		self.swapPlayers = function()
+        {
 			var container = self.nowPlayer ;
 			self.nowPlayer = self.opponent ;
 			self.opponent = container ;
 		};
 		
 		//Вешаем события сокетов
-		self.onSocketHandlers = function() {
+		self.onSocketHandlers = function()
+        {
 
 			for(var i = 0 ; i < self.players.length; i++) {
 				self.players[i].user.socket.on('sendSudmarines', self.sendSudmarines) ;	
@@ -88,8 +74,8 @@
 
 		
 		//Снимает события сокетов
-		self.offSocketHandlers = function() {
-
+		self.offSocketHandlers = function()
+        {
 			for(var i = 0 ; i < self.players.length; i++) {
 				self.players[i].user.socket.removeListener('sendSudmarines', self.sendSudmarines) ;	
 				self.players[i].user.socket.removeListener('shoot', self.shoot) ;			
@@ -98,8 +84,8 @@
 		
 
 	
-		self.sendSudmarines = function(data) {
-
+		self.sendSudmarines = function(data)
+        {
 			var player = self.getPlayerId(this.id.toString()) ;
 					
 			if(!player)
@@ -111,12 +97,13 @@
 		};
 		
 		
-		self.preparationGame = function() {
+		self.preparationGame = function()
+        {
 			return (self.countReadyPlayer == self.countPlayer) ;
 		};
 		
-		self.disconnectPlayer = function(id) {
-
+		self.disconnectPlayer = function(id)
+        {
 			if(self.interval)
 				self.stopTimer() ;	 
 				
@@ -131,7 +118,6 @@
 		
 		self.preparationPlayerGame = function(player, sudmarines)
 		{
-
 			if(self.preparationGame())
 				return false ;
 				
@@ -179,8 +165,8 @@
 		};
 		
 		
-		self.move = function() {
-
+		self.move = function()
+        {
             self.nowPlayer.user.socket.emit('move', {move : true }) ;
             self.opponent.user.socket.emit('move', {move : false  }) ;
 
@@ -192,9 +178,7 @@
 					self.swapPlayers() ;
 					self.stopTimer() ;	
 					self.move() ;
-
 				}
-
 			})
 		};
 		
@@ -202,7 +186,7 @@
 		//Старт основной фазы игры
 		self.startToGame = function() 
 		{
-				
+
 			//Рандом для начинающего пользователя
 			self.nowPlayer = (Math.random() > 0.5) ? self.players[0] : self.players[1];
 			self.opponent = self.nowPlayer ==  self.players[0] ?  self.players[1] : self.players[0] ;
@@ -216,7 +200,8 @@
 	
 		
 		//Выполнение таймера	
-		self.startTimer = function(startTime, delay, callback) {
+		self.startTimer = function(startTime, delay, callback)
+        {
 			var time = startTime * 1000 ;
 			var delay =  delay * 1000 ;
 			
@@ -229,13 +214,11 @@
 		};
 		
 		//Стоп таймер
-		self.stopTimer = function() {
+		self.stopTimer = function()
+        {
 			clearInterval(self.interval) ;
 		};
-		
-		
-		
-	
+
 		/*Выстрел
 		  Координаты , и номер игрока который стреляет
 		*/
@@ -296,22 +279,18 @@
 			self.offSocketHandlers() ;
 			
 			self.destroyGame();
-			
-			
 		};
 
         waterWar.super_.apply(this, arguments);
-	
-		
+
 	} ; util.inherits(waterWar, basicGames.game);
 	
 
 
-	/*Игрок
-	  Передаем ссылку на пользователя играющего и саму игру */
-	  
-
-
+	/**
+     * Игрок
+     * Передаем ссылку на пользователя играющего и саму игру
+     */
 	var waterWarPlayer = function(user)
 	{
 		var self = this ;
@@ -323,13 +302,12 @@
 	} ; util.inherits(waterWarPlayer, basicGames.player);
 	
 
-	/*Обьект поле игры 
-	  Массив судмарин,
-	  Маска поля
-	  Кол-во ячеек
+	/**
+     * Обьект поле игры
+     * Массив судмарин,
+     * Маска поля
+     * Кол-во ячеек
 	*/
-	
-
 	var waterField = function(countCells) 
 	{
 		var self = this; 
@@ -361,9 +339,7 @@
 		self.isAliveSudmarines = function()
 		{
 			
-			for(var key in self.sudmarines) 
-			{
-				
+			for(var key in self.sudmarines) {
 				if(self.sudmarines[key].aliveIsSudmarine())
 					return true ;
 			}
@@ -375,13 +351,9 @@
 		//Создание маски
 		self.createMask = function()
 		{
-			
-			for(var i = 0; i <= self.countCells + 1; i++)
-			{
+			for(var i = 0; i <= self.countCells + 1; i++) {
 				self.mask[i] = [] ;
-				
-				for(var j = 0 ; j <= self.countCells + 1; j++)
-				{
+				for(var j = 0 ; j <= self.countCells + 1; j++) {
 					self.mask[i][j] = null ;		
 				}	
 			}				
@@ -390,12 +362,7 @@
 		//Добавляем судмарины в поле
 		self.addSudmarines = function(sudmarines)
 		{
-				
-
-			for(var i = 0 ; i < sudmarines.length; i++)
-			{
-				
-				
+			for(var i = 0 ; i < sudmarines.length; i++) {
 				if(!self.isSudmarinePole(sudmarines[i]))
 					return false ;
 				
@@ -406,20 +373,15 @@
 				sudmarine.countCells = sudmarines[i].countCells ;
 				sudmarine.cells = sudmarines[i].cells ;
 				
-				for( var j = 0 ; j < sudmarines[i].cells.length; j++)
-				{			
-					
+				for( var j = 0 ; j < sudmarines[i].cells.length; j++) {
 					self.mask[sudmarines[i].cells[j].x][sudmarines[i].cells[j].y] = sudmarine ;
-				
 				}
 				
 				self.sudmarines[i] = sudmarine ;
 					
 			}
-			
-		
-				return true ;
-		
+
+			return true ;
 		};
 		
 		
@@ -428,33 +390,27 @@
 		{
 			if(sudmarine.countCells == 1)
 				return true ;
-			
-			  
-			if((sudmarine.cells[sudmarine.countCells - 1].x - sudmarine.cells[0].x + 1) 
-			   * (sudmarine.cells[sudmarine.countCells - 1].y - sudmarine.cells[0].y + 1) == sudmarine.countCells)	
+
+			if((sudmarine.cells[sudmarine.countCells - 1].x - sudmarine.cells[0].x + 1) *
+			   (sudmarine.cells[sudmarine.countCells - 1].y - sudmarine.cells[0].y + 1) == sudmarine.countCells)
 				return true ;
-				
-				
+
 				return false ;
-		
-		
+
 		};
 		
 		
 		//Может ли встать судмарина
 		self.isSudmarinePole = function(sudmarine)
 		{
-			
 			var startX = sudmarine.cells[0].x ;
 			var endX = sudmarine.cells[sudmarine.countCells - 1].x ;
 			var startY = sudmarine.cells[0].y ;
 			var endY = sudmarine.cells[sudmarine.countCells - 1].y ;
 			
-						
-			for(var i = startY - 1 ; i <= endY + 1 ; i++)
-			{
-				for(var j = startX - 1; j <= endX + 1; j++)
-				{
+
+			for(var i = startY - 1 ; i <= endY + 1 ; i++) {
+				for(var j = startX - 1; j <= endX + 1; j++) {
 					if(i < 0 || i > 11 || j < 0 || j > 11)
 						return false ;
 
@@ -463,10 +419,8 @@
 								
 				}
 			}
-		
+
 			return true ;
-		
-		
 		}
 	
 	};
@@ -478,11 +432,8 @@
 	var wateRsudmarine = function()
 	{
 		var self = this ;
-		
 		self.dieCell = 0 ;
-		
 		self.countCells = null ;
-	
 		self.cells = [] ;
 		
 		self.aliveIsSudmarine = function()

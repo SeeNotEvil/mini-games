@@ -6,7 +6,6 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
     *  Модели данных
     */
     var Statistic = Backbone.Model.extend({
-
         defaults: {
             countGame: 0,
             countUsers: 0,
@@ -17,7 +16,6 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
     });
 
     var Game = Backbone.Model.extend({
-
         defaults: {
             title: "",
             time: "",
@@ -26,36 +24,29 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
             maxCountPlayer: 0,
             gameId : 0,
             isFull: true
-
         }
     });
 
     var LobbyModel = Backbone.Model.extend({
 
         defaults: {
-
             titleGame: "Морской бой",
             message: "Создана игра",
             textsConsole: [],
             options: []
-
         },
 
         initialize: function() {
-
             this.set("textsConsole", []) ;
             this.set("options", []) ;
-
         },
 
         clear: function() {
-
             this.set("textsConsole", []) ;
             this.set("options", []) ;
-
         },
 
-        //Сделано для будущего логирования собщений
+        //Сделано для будущего логирования сообщений
         addText: function(text) {
             this.get("textsConsole").push(text) ;
             this.trigger("addText", text) ;
@@ -64,16 +55,11 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
         setOptions: function(optionsGame, titleGame) {
 
             var configGames = App.appModel.get("configGames") ;
-
             this.set("titleGame", configGames[titleGame].label) ;
-
             var gameValues ;
 
             for (var key in optionsGame) {
-
-
                 if((gameValues = configGames[titleGame].values[key]) != undefined) {
-
                     var option = {} ;
 
                     if(gameValues.label != undefined)
@@ -82,7 +68,6 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
                         option.label = key ;
 
                     if (gameValues.value instanceof Object) {
-
                         if(gameValues.value[optionsGame[key]] != undefined)
                             option.value = gameValues.value[optionsGame[key]] ;
                         else
@@ -90,31 +75,24 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
                     }
                     else {
                         option.value = optionsGame[key] ;
-
                     }
 
                     this.get("options").push(option) ;
                 }
-
             }
             return this ;
         }
-
-
 
     });
 
 
     var GameCollection = Backbone.Collection.extend({
-
          model: Game
-
      });
 
     var AppModel = Backbone.Model.extend({
 
         defaults: {
-
             gameDirectory: 'games/' ,
             moduleDirectory: 'module/',
             error: "",
@@ -131,7 +109,6 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
             userId: 0,
             login: ""
         }
-
     }) ;
 
     /*
@@ -141,24 +118,22 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
         template: _.template($('#games-template').html()),
 
-        events:  {
+        events:
+        {
             "click .btnJoinGame" : "joinGame"
         },
 
-        joinGame: function(event) {
-
+        joinGame: function(event)
+        {
             event.preventDefault();
 
             var gameId = this.model.get("gameId") ;
             App.connectingToGame(gameId) ;
-
-
         },
 
-        render: function() {
-
+        render: function()
+        {
             $(this.el).html(this.template(this.model.toJSON()));
-
             return this;
         }
 
@@ -169,14 +144,12 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          template: _.template($('#list-game-template').html()),
 
-         render: function() {
-
+         render: function()
+         {
              var self = this;
-
              $(this.el).html(this.template());
 
              _.each(App.gamesCollection.models, function (game) {
-
                  var gameView = self.renderGame(game);
                  console.log(gameView) ;
                  $(this.el).find("#listGames").append(gameView) ;
@@ -186,9 +159,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
              return this;
          },
 
-         renderGame: function(game) {
-
-
+         renderGame: function(game)
+         {
              var gameView = new GameView({
                  model: game
              });
@@ -202,18 +174,15 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          template: _.template($('#statistic-template').html()),
 
-         initialize: function(){
-
+         initialize: function()
+         {
              App.statisticModel.bind('change', this.render, this);
-
          },
 
-         render: function() {
-
+         render: function()
+         {
              $(this.el).html(this.template(App.statisticModel.toJSON()));
-
              return this;
-
          }
 
      }) ;
@@ -224,33 +193,26 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          template: _.template($('#hosting-template').html()),
 
          initialize: function(){
-
              App.lobbyModel.bind('addText', this.addConsoleText, this);
-
          },
 
-
-         render: function() {
-
+         render: function()
+         {
              $(this.el).html(this.template(App.lobbyModel.toJSON()));
              return this;
-
          },
 
-
-         addConsoleText: function(text) {
-
+         addConsoleText: function(text)
+         {
              var date = this.getDate() ;
              $('#consoleLobby').append('<p>' + date + '  ' + text + '</p>') ;
-
          },
 
-         getDate : function() {
+         getDate : function()
+         {
              var now = new Date();
-
              var date = now.getDate()  + '-' + now.getMonth() + '-' + now.getFullYear() + '   ' +
                         now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-
              return date ;
          }
 
@@ -260,9 +222,7 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
      var FormView = Backbone.View.extend({
 
          initialize: function() {
-
              this.validator = new Validator() ;
-
          },
 
          template: _.template($('#open_create_game-template').html()),
@@ -272,7 +232,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
              "click .createGame" : "createGame"
          },
 
-         createGame: function() {
+         createGame: function()
+         {
 
              var titleGame = $('#selectOptionGame').val() ;
 
@@ -285,62 +246,50 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
                 return ;
 
              if(configGames[titleGame].rules != undefined) {
-
                  this.validator.setValidateInfo(configGames[titleGame].rules) ;
                  if(!this.validator.doValidateForm($('#optionsGame'), true))
                     return ;
              }
 
              var options = this.getOptionsGame() ;
-
              App.hostingGame(titleGame, options);
          },
 
-         getOptionsGame: function() {
-
+         getOptionsGame: function()
+         {
              var options = {} ;
 
              $('#optionsGame').find("input,select").each(function(i, elem) {
-
                  if($(this).attr("type") == "submit")
                      return ;
 
                  var nameElement = $(this).attr("name") ;
-
                  var valueElement = $(this).val() ;
-
                  options[nameElement] = valueElement ;
              }) ;
 
              return options ;
-
          },
 
 
-         selectGame: function(event) {
-
+         selectGame: function(event)
+         {
              var value = $('#selectOptionGame').val() ;
 
              if(value != "") {
-
                  require(["frontend/text!" + this.model.get("gameDirectory") + value + "/frontend/form.html"], function(form){
-
                     $('#optionsGame').html(form) ;
-
                  });
              }
              else {
                  $('#optionsGame').html("") ;
              }
-
          },
 
-         render: function() {
-
+         render: function()
+         {
              $(this.el).html(this.template(this.model.toJSON()));
-
              return this;
-
          }
 
      });
@@ -357,7 +306,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          modalWindow : null,
 
-         initialize: function(){
+         initialize: function()
+         {
              this.model.bind('change:error', this.showError, this);
              this.views.statisticView = new StatisticView({});
              this.views.lobbyView = new LobbyView({});
@@ -365,27 +315,26 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          },
 
          /*!!!!!!!!!!!!!*/
-         events:  {
+         events:
+         {
             "click .openCreateGame" : "openForm",
             "click .sendLogin" : "sendLogin",
             "click .exitGame" : "exitGame"
          },
 
-         exitGame:function(event) {
-
+         exitGame:function(event)
+         {
              event.preventDefault();
-
              App.exitGame() ;
          },
 
-         exitPlatform: function() {
-
+         exitPlatform: function()
+         {
             App.exitPlatform() ;
-
          },
 
-         addStyle: function(css) {
-
+         addStyle: function(css)
+         {
              var styleElement = document.createElement("style");
              styleElement.type = "text/css";
 
@@ -399,21 +348,17 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          },
 
-         sendLogin: function() {
-
+         sendLogin: function()
+         {
             var value = $('#login-input').val() ;
-
             App.sendLogin(value) ;
-
          },
 
 
          openForm: function(event) {
 
              var formView = new FormView({
-
                 model: this.model
-
              }) ;
 
              event.preventDefault();
@@ -426,10 +371,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          },
 
          templates: {
-
              "application-template" : _.template($('#application-template').html()),
              "authorize" : _.template($('#authorize-template').html())
-
          },
 
          showError: function() {
@@ -438,10 +381,9 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          },
 
-         render: function(command) {
-
+         render: function(command)
+         {
              switch (command) {
-
                  case "none":
                      this.renderEmpty() ;
                  break ;
@@ -461,46 +403,38 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
                  case "lobby":
                      this.renderLobby() ;
                  break ;
-
              }
          },
 
-         renderAuthorize: function() {
-
+         renderAuthorize: function()
+         {
              $(this.el).html(this.templates["authorize"](this.model.toJSON()));
-
          },
 
-         renderPlatform: function() {
-
+         renderPlatform: function()
+         {
              $(this.el).html(this.templates["application-template"](this.model.toJSON()));
-
              $('#statistic').html(this.views.statisticView.render().el) ;
-
          },
 
-         renderLobby: function() {
-
+         renderLobby: function()
+         {
              if(this.modalWindow != null) {
-
                  this.modalWindow.close() ;
                  this.modalWindow = null ;
              }
 
              $('#sideBarMenu').html(' <a class = "exitGame" href="#">Выйти</a>') ;
-
              $('#content').html(this.views.lobbyView.render().el) ;
 
              return this ;
          },
 
          renderListGame: function() {
+
              this.views.gameListView = new GameListView({});
-
              $('#sideBarMenu').html('<a class = "openCreateGame" href="#">Создать игру</a>') ;
-
              $('#content').html(this.views.gameListView.render().el) ;
-
          },
 
 
@@ -511,10 +445,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          }
      });
 
-
      var App =
      {
-
          interval : null ,
 
          css: {},
@@ -523,7 +455,7 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          init: function (configGames) {
 
-
+             App.configGames = configGames ;
              //Инициализируем сокет
              Io.init();
              //Вешаем обработчики кнопок
@@ -547,36 +479,33 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
 
          //Отправка логина (прохождение авторизации)
-         sendLogin: function(login) {
-
+         sendLogin: function(login)
+         {
              if(login == "") {
                  App.appModel.set("error", "Поле логин не может быть пустым!!!") ;
                  return ;
              }
-
              Io.socket.emit('sendLogin', {login : login}, App.authorization) ;
          },
 
-         setStyle: function(css) {
-
+         setStyle: function(css)
+         {
              if(App.css[css.name] == undefined) {
 
                  App.css[css.name] = css ;
                  App.appView.addStyle(css) ;
 
              }
-
          },
 
-         getLogin: function() {
-
+         getLogin: function()
+         {
              return App.user.get("login") ;
-
          },
 
          //Результаты авторизации
-         authorization: function(data) {
-
+         authorization: function(data)
+         {
              if(data.status)  {
                  App.appModel.set("authorization", true) ;
                  App.user = new User(data) ;
@@ -587,8 +516,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
                  App.appModel.set("error", "Ошибка авторизации") ;
          },
 
-         onSocketHandlers: function() {
-
+         onSocketHandlers: function()
+         {
              //События сокетов
              Io.socket.on('showFreeGames', App.showFreeGames);
              Io.socket.on('updateStatistic', App.updateStatistic);
@@ -605,10 +534,9 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          /**
           * Показываем комнаты
           */
-         showFreeGames: function(data) {
-
+         showFreeGames: function(data)
+         {
              var games = [] ;
-
              var label = "" ;
 
              for(var i = 0 ; i < data.games.length; i++) {
@@ -621,46 +549,43 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
              }
 
              App.gamesCollection = new GameCollection(games) ;
-
              App.appView.render("main-menu");
 
          },
 
-         updateStatistic: function(data) {
+         updateStatistic: function(data)
+         {
              App.statisticModel.set(data) ;
          },
 
          /**
           * Запрос на создание игры
           */
-         hostingGame: function(titleGame, options){
-
+         hostingGame: function(titleGame, options)
+         {
              Io.socket.emit('hostingGame', {titleGame : titleGame, options:  options }, App.hostedGame) ;
-
          },
 
          /**
           * Присоеденение к игре
           */
-         connectingToGame: function(id) {
+         connectingToGame: function(id)
+         {
              Io.socket.emit('connectingToGame', {gameId : id}) ;
          },
 
          /**
           *  Присоеденились к игре
           */
-         connectedGame: function(data) {
-
-            // App.appModel.set("gameId", data.gameId) ;
+         connectedGame: function(data)
+         {
 
              App.lobbyModel.clear() ;
              App.lobbyModel.setOptions(data.optionsGame, data.titleGame) ;
              App.appView.render("lobby");
              App.lobbyModel.addText("Вы присоеденились ...") ;
              App.lobby = true ;
-
          },
-
 
 
          /**
@@ -684,10 +609,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          /**
           * Создалась игра
           */
-         hostedGame: function(data)  {
-
-             /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-
+         hostedGame: function(data)
+         {
              App.lobbyModel.clear() ;
              App.lobbyModel.setOptions(data.optionsGame, data.titleGame) ;
              App.appView.render("lobby");
@@ -701,11 +624,9 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          readyToStartGameTimer: function(data)
          {
-             App.startTimer(data.time, 1, function(time)
-             {
+             App.startTimer(data.time, 1, function(time) {
 
                  if(time <=0) {
-
                      App.stopTimer() ;
                      App.lobbyModel.addText('Инициализация игры') ;
                  }
@@ -718,19 +639,18 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          /**
           *  Создалась игра
           */
-
-         connectedUserGame: function(data) {
-
+         connectedUserGame: function(data)
+         {
              App.lobbyModel.addText('К вам присоеденился игрок-' + data.name) ;
          },
 
          /**
           * Игрок отсоеденился от лобби
           */
-         playerLeaveGameLobby: function(data) {
+         playerLeaveGameLobby: function(data)
+         {
              App.lobbyModel.addText('Игрок ' + data.name + 'отсоеденился от игры ') ;
              App.stopTimer() ;
-
          },
 
          creatorLeaveGameLobby: function(data)
@@ -745,16 +665,17 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          /**
           * Старт игры
           */
-         initGame: function(data) {
-
+         initGame: function(data)
+         {
              App.stopTimer() ;
-
              App.createInitGame(data.title, data.optionsGame,  data.optionsPlayer) ;
-
          },
 
-         createInitGame: function(title, optionsGame, optionsPlayer) {
-
+         /**
+         * Создание игры
+         */
+         createInitGame: function(title, optionsGame, optionsPlayer)
+         {
              if(App.appModel.get("configGames")[title] != undefined) {
 
                  var directory = App.appModel.get("gameDirectory") + title + "/frontend/";
@@ -776,13 +697,10 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
                      game = null ;
 
                  });
-
              }
-
          },
 
 
-         //Выполнение таймера
          startTimer : function(startTime, delay, callback)
          {
              var time = startTime * 1000 ;
@@ -797,7 +715,7 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
              return time ;
          },
 
-         //Стоп таймер
+
          stopTimer : function() {
              console.log("stopTimer") ;
              clearInterval(App.interval) ;

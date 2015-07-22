@@ -10,11 +10,9 @@
 </head>
 
 <body id = "body">
+
 	<div id = "area">
-
-
 	</div>
-
 
     <!-- Статистика -->
     <script id="statistic-template" type="text/template">
@@ -26,7 +24,6 @@
         <p>Свободные игроки -  <%= countFreeUser%></p>
     </script>
     <!-- Статистика -->
-
 
     <!-- Платформа -->
     <script id="application-template" type="text/template">
@@ -155,11 +152,7 @@
 
 <script>
 
-
 	requirejs.config({
-
-      
-
 		paths: {
             'bootstrap-dialog' : 'frontend/style/bootstrap-3.2.0-dist/js/bootstrap-dialog',
             'bootstrap' : 'frontend/style/bootstrap-3.2.0-dist/js/bootstrap.min',
@@ -175,7 +168,6 @@
 
 		},
 
-
         shim: {
             'bootstrap' : ['jquery'],
             'bootstrap-dialog' : ['jquery']
@@ -185,10 +177,8 @@
 
 
 	require(["app", "io", "configGames"], function(App, Io, configGames){
-
          Io.init() ;
 		 App.init(configGames) ;
-
 	})
 
 </script>

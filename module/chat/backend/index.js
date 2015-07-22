@@ -7,9 +7,9 @@
 		self.users = [] ;
 		
 		
-		self.init = function(options) {
-			for(var i = 0 ; i < options.players.length; i++)
-			{
+		self.init = function(options)
+        {
+			for(var i = 0 ; i < options.players.length; i++) {
 				self.addUser(options.players[i].user.socket, options.players[i].user.login) ;
 			}
 		};
@@ -26,8 +26,7 @@
 		self.sendMessage = function(message)
 		{
 			console.log(message) ;
-			for(var key in self.users)
-			{
+			for(var key in self.users) {
 				self.users[key].socket.emit("sendMessageChat", message) ;
 			}
 	
@@ -43,8 +42,7 @@
 			
 			var key = this.id.toString() ;
 			
-			if(self.users[key] != undefined)
-			{
+			if(self.users[key] != undefined) {
 				var login = self.users[key].login ;
 				console.log("login " + login) ;
 				var date = new Date() ;
@@ -59,11 +57,8 @@
 		
 		self.destroy = function()
 		{
-			
-			for(var key in self.users)
-			{
+			for(var key in self.users) {
 				self.offSocketHandlers(self.users[key].socket) ;
-			
 			}
 		};
 		
