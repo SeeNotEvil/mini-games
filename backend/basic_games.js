@@ -87,7 +87,11 @@
             var player = this.createGamePlayer(user) ;
             this.players.push(player)  ;
             this.countPlayer++ ;
+
+            return player ;
         }
+
+
     };
 
     /**

@@ -33,6 +33,7 @@
 			socket.on('sendLogin', self.authorizeUser) ;
 			socket.on('showFreeGames', self.showFreeGames) ;
 			socket.on('disconnect', self.userDisсonnect) ;
+            socket.on('leavePlatform', self.userDisсonnect) ;
             socket.on('showMenu', self.showMenu) ;
 			socket.on('hostingGame', self.hostingGame)  ;
 			socket.on('connectingToGame', self.connectionUserToGame) ;
@@ -161,7 +162,7 @@
                     status: false
                 }) ;
 		} ;
-		
+
 
 
         /**
@@ -216,12 +217,24 @@
             }
         };
 
+        self.leavePlatform = function(data, cb)
+        {
+            var id = this.id.toString() ;
+
+            if(self.users[id] == undefined)
+                return ;
+
+            self.userDisсonnect(data) ;
+            cb() ;
+        };
+
         /**
          * Дисконнект
          */
-		self.userDisсonnect = function(data)
+		self.userDisсonnect = function(data, cb)
 		{
 			var id = this.id.toString() ;
+
             if(self.users[id] == undefined)
                 return ;
 
@@ -230,6 +243,9 @@
 
             //Удаление пользователя
 			self.deleteUser(id) ;
+
+            if(cb != undefined)
+                cb() ;
 
 		} ;
 
@@ -340,10 +356,10 @@
 				//Записываем что игрок находится в лобби
 				self.users[userId].location = "lobby" ;
 				self.users[userId].game = self.games[gameId] ;
-				self.games[gameId].addPlayer(self.users[userId]) ;
+                var playerConnecting = self.games[gameId].addPlayer(self.users[userId]) ;
 
                 //Информируем всех игроков о присоеденении
-				self.connectedUserToGame(self.games[gameId], userId) ;
+				self.connectedUserToGame(self.games[gameId], playerConnecting) ;
 
                 //Если игра заполнилась , стартуем подготовку к игре
 				if(self.games[gameId].isFull())
@@ -356,16 +372,16 @@
         /**
          * Раассылаем информацию о присоеденении  игрока к игре
         */
-		self.connectedUserToGame = function(game, userId)
+		self.connectedUserToGame = function(game, playerConnecting)
 		{
 			var players = game.players ;
-		
+            
 			for(var key in players) {
-				if(players[key].user.id == userId)
+				if(players[key] == playerConnecting)
 					players[key].user.socket.emit('connectedGame', {id : game.id, titleGame : game.titleGame,
                                                                     optionsGame: game.options}) ;
 				else
-					players[key].user.socket.emit('connectedUserGame', {name : players[key].user.login}) ;
+					players[key].user.socket.emit('connectedUserGame', {name : playerConnecting.user.login}) ;
 			}
 		};
 

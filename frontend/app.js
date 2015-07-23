@@ -206,6 +206,7 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          {
              var date = this.getDate() ;
              $('#consoleLobby').append('<p>' + date + '  ' + text + '</p>') ;
+             $('#consoleLobby').scrollTop( $('#consoleLobby').height());
          },
 
          getDate : function()
@@ -319,10 +320,19 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          {
             "click .openCreateGame" : "openForm",
             "click .sendLogin" : "sendLogin",
-            "click .exitGame" : "exitGame"
+            "click .exitGame" : "exitGame",
+            "click .leavePlatform" : "leavePlatform"
          },
 
-         exitGame:function(event)
+         leavePlatform: function(event)
+         {
+
+             event.preventDefault();
+             App.leavePlatform() ;
+
+         },
+
+         exitGame: function(event)
          {
              event.preventDefault();
              App.exitGame() ;
@@ -378,7 +388,6 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          showError: function() {
 
             $('#message').html(this.model.get("error")) ;
-
          },
 
          render: function(command)
@@ -447,7 +456,7 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
      var App =
      {
-         interval : null ,
+         interval: null,
 
          css: {},
 
@@ -455,17 +464,18 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          init: function (configGames) {
 
-             App.configGames = configGames ;
+             App.configGames = configGames;
              //Инициализируем сокет
              Io.init();
-             //Вешаем обработчики кнопок
+
+             //Вешаем обработчики сокетов
              App.onSocketHandlers();
 
              App.appModel = new AppModel({
                  configGames: configGames
-             }) ;
+             });
 
-             App.lobbyModel =  new LobbyModel() ;
+             App.lobbyModel = new LobbyModel();
              App.statisticModel = new Statistic();
              App.gamesCollection = new GameCollection();
 
@@ -477,46 +487,45 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          },
 
-
          //Отправка логина (прохождение авторизации)
-         sendLogin: function(login)
+         sendLogin: function (login)
          {
-             if(login == "") {
-                 App.appModel.set("error", "Поле логин не может быть пустым!!!") ;
-                 return ;
+             if (login == "") {
+                 App.appModel.set("error", "Поле логин не может быть пустым!!!");
+                 return;
              }
-             Io.socket.emit('sendLogin', {login : login}, App.authorization) ;
+             Io.socket.emit('sendLogin', {login: login}, App.authorization);
          },
 
-         setStyle: function(css)
+         setStyle: function (css)
          {
-             if(App.css[css.name] == undefined) {
+             if (App.css[css.name] == undefined) {
 
-                 App.css[css.name] = css ;
-                 App.appView.addStyle(css) ;
+                 App.css[css.name] = css;
+                 App.appView.addStyle(css);
 
              }
          },
 
-         getLogin: function()
+         getLogin: function ()
          {
-             return App.user.get("login") ;
+             return App.user.get("login");
          },
 
          //Результаты авторизации
-         authorization: function(data)
+         authorization: function (data)
          {
-             if(data.status)  {
-                 App.appModel.set("authorization", true) ;
-                 App.user = new User(data) ;
+             if (data.status) {
+                 App.appModel.set("authorization", true);
+                 App.user = new User(data);
                  App.appView.render("platform");
-                 Io.socket.emit('showMenu', {}) ;
+                 Io.socket.emit('showMenu', {});
              }
              else
-                 App.appModel.set("error", "Ошибка авторизации") ;
+                 App.appModel.set("error", "Ошибка авторизации");
          },
 
-         onSocketHandlers: function()
+         onSocketHandlers: function ()
          {
              //События сокетов
              Io.socket.on('showFreeGames', App.showFreeGames);
@@ -534,27 +543,34 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          /**
           * Показываем комнаты
           */
-         showFreeGames: function(data)
+         showFreeGames: function (data)
          {
-             var games = [] ;
-             var label = "" ;
+             var games = [];
+             var label = "";
 
-             for(var i = 0 ; i < data.games.length; i++) {
-                 var titleGame = data.games[i].titleGame ;
+             for (var i = 0; i < data.games.length; i++) {
+                 var titleGame = data.games[i].titleGame;
 
-                 if((label = App.appModel.get('configGames')[titleGame].label) != undefined)
-                     data.games[i].label =  label ;
+                 if ((label = App.appModel.get('configGames')[titleGame].label) != undefined)
+                     data.games[i].label = label;
 
-                 games.push(new Game(data.games[i])) ;
+                 games.push(new Game(data.games[i]));
              }
 
-             App.gamesCollection = new GameCollection(games) ;
+             App.gamesCollection = new GameCollection(games);
              App.appView.render("main-menu");
 
          },
 
+         leavePlatform: function ()
+         {
+             console.log("leavePlatform") ;
+             Io.socket.emit('leavePlatform', {}, App.restart) ;
+         },
+
          updateStatistic: function(data)
          {
+             console.log("updateStatistic") ;
              App.statisticModel.set(data) ;
          },
 
@@ -592,18 +608,11 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
           * Полный выход из платформы
           *
           */
-         exitPlatform: function() {
+         restart: function()
+         {
+             App.stopTimer() ;
+             App.appView.render("authorize");
 
-             if(App.lobby)
-             {
-                 Io.socket.emit('exitGame', {}, function(){
-                     App.appView.render("authorize");
-                     App.stopTimer() ;
-                     App.lobby = false ;
-                 }) ;
-             }
-             else
-                 App.appView.render("authorize");
          },
 
          /**
@@ -641,6 +650,7 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
           */
          connectedUserGame: function(data)
          {
+
              App.lobbyModel.addText('К вам присоеденился игрок-' + data.name) ;
          },
 
@@ -716,7 +726,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
          },
 
 
-         stopTimer : function() {
+         stopTimer : function()
+         {
              console.log("stopTimer") ;
              clearInterval(App.interval) ;
          },
@@ -729,7 +740,8 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
              Io.socket.emit('showMenu', {}) ;
          },
 
-         disconnect: function() {
+         disconnect: function()
+         {
 
              if(App.appModel.get("game") == null)
                  App.appModel.set("error", "Соеденение потеряно , попробуйте подключится позднее...") ;
@@ -738,16 +750,17 @@ define("app", ["jquery", "io", 'backbone', 'bootstrap-dialog',  'validator'],
 
          },
 
-         exitGame: function(){
+         exitGame: function()
+         {
 
              Io.socket.emit('exitGame', {}, App.exit) ;
          },
 
-         exit: function() {
+         exit: function()
+         {
 
              if(App.appModel.get("game") != null)  {
                  App.appModel.get("game").exitGame();
-
              }
              else {
                  App.appView.render("platform") ;
